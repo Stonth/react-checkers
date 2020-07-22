@@ -1,0 +1,19 @@
+.Board {
+    margin: 0;
+    padding: 0;
+    line-height: 0;
+    user-select: none;
+    display: inline-block;
+}
+
+.Board .spaceContainer {
+    display: inline-block;
+}
+
+.Board .white {
+    background-color: white;
+}
+
+.Board .black {
+    background-color: black;
+}

@@ -1,0 +1,4 @@
+.Piece {
+    position: absolute;
+    pointer-events: none;
+}
