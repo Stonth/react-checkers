@@ -33,7 +33,7 @@ Board.prototype.setFrom = function (board) {
         if (!piece) {
             return null;
         }
-        return piece.clone();
+        return new Piece(piece.type, piece.id, {x: piece.x, y: piece.y});
     });
     this.pieceCounter = board.pieceCounter;
 };

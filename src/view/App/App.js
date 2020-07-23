@@ -9,7 +9,9 @@ import Board from './Board/Board';
 import Move from '../../model/move';
 import Editor from './Editor/Editor';
 import ModelBoard from '../../model/board';
-import BoardState from '../../model/board-state';
+import ModelBoardState from '../../model/board-state';
+import ModelAction from '../../model/action';
+import MinimaxWorker from '../../workers/minimax.worker';
 
 class App extends Component {
 
@@ -20,7 +22,7 @@ class App extends Component {
     this.state = {
       boardSize,
 
-      boardState: new BoardState(),
+      boardState: new ModelBoardState(),
 
       highlightedSpace: null,
 
@@ -73,6 +75,12 @@ class App extends Component {
       editorPossibleActions: this.state.boardState.getActions(this.state.boardState.turn),
       editorCurrentAction: [],
       editorBoards: [this.state.boardState.board]
+    });
+  }
+
+  closeEditor() {
+    this.setState({
+      editorOpen: false
     });
   }
 
@@ -254,7 +262,24 @@ class App extends Component {
   }
 
   handleEditorCheckClick() {
-    // TODO: Execute the move.
+    const boardState = this.state.boardState.nextState(new ModelAction(this.state.editorCurrentAction));
+
+    this.setState({
+      boardState
+    });
+    this.closeEditor();
+
+    const worker = new MinimaxWorker();
+    worker.postMessage({
+      boardState: boardState
+    });
+    worker.addEventListener('message', (event) => {
+      this.setState({
+        boardState: this.state.boardState.nextState(new ModelAction(event.data.moves))
+      });
+      this.openEditor();
+      worker.terminate();
+    });
   }
 
   handleEditorBackClick() {
