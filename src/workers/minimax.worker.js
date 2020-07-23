@@ -13,7 +13,7 @@ function heuristic(boardState) {
     for (let i = 0; i < boardState.board.pieces.length; i++) {
         const piece = boardState.board.pieces[i];
         if (piece) {
-            switch (piece) {
+            switch (piece.type) {
                 case Piece.TYPE.RED:
                     x += 1;
                 break;
@@ -37,7 +37,7 @@ function minimax(boardState, depth) {
     let children = boardState.getActions(boardState.turn);
     let bestAction = null;
     // TODO: Shuffle children
-    if (boardState.board.turn == BoardState.TURN.Red) {
+    if (boardState.turn == BoardState.TURN.Red) {
         let value = -Infinity;
         for (const child of children) {
             const childValue = minimaxHelper(boardState.nextState(child), 0, depth, -Infinity, Infinity);
@@ -74,7 +74,7 @@ function minimaxHelper(boardState, depth, maxDepth, a, b) {
         for (const child of children) {
             const childBoard = boardState.nextState(child);
             const nextLevel = minimaxHelper(childBoard, depth + 1, maxDepth, a, b);
-            if (value < nextLevel) {
+            if (nextLevel > value) {
                 value = nextLevel;
             }
             if (a < value) {
@@ -89,11 +89,11 @@ function minimaxHelper(boardState, depth, maxDepth, a, b) {
         for (const child of children) {
             const childBoard = boardState.nextState(child);
             const nextLevel = minimaxHelper(childBoard, depth + 1, maxDepth, a, b);
-            if (value < nextLevel) {
+            if (nextLevel < value) {
                 value = nextLevel;
             }
             if (b > value) {
-                a = value;
+                b = value;
             }
             if (a >= b) {
                 break;

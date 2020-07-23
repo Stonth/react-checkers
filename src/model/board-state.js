@@ -141,7 +141,7 @@ BoardState.prototype.getWinner = function () {
 BoardState.prototype.getCaptureActions = function (x, y, board, turn, currentAction) {
     let actions = [];
     const p = board.getPieceFromPosition(x, y);
-
+    
     if (turn === BoardState.TURN.RED) {
         if (y > 1) {
             if (x > 1 && !board.spaceContainsPiece(x - 2, y - 2) && board.spaceContainsBlack(x - 1, y - 1)) {

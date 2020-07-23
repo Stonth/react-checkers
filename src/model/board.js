@@ -33,7 +33,7 @@ Board.prototype.setFrom = function (board) {
         if (!piece) {
             return null;
         }
-        return new Piece(piece.type, piece.id, {x: piece.x, y: piece.y});
+        return new Piece(piece.type, piece.id, {x: piece.position.x, y: piece.position.y});
     });
     this.pieceCounter = board.pieceCounter;
 };
@@ -108,10 +108,21 @@ Board.prototype.applyMove = function (move) {
     const id = this.grid[move.from.y][move.from.x];
     this.grid[move.from.y][move.from.x] = null;
     this.grid[move.to.y][move.to.x] = id;
-    this.getPieceFromID(id).position = {x: move.to.x, y: move.to.y};
+    const piece = this.getPieceFromID(id);
+    piece.position = {x: move.to.x, y: move.to.y};
+    if (piece.type === Piece.TYPE.RED && piece.position.y === 0) {
+        piece.type = Piece.TYPE.RED_KING;
+    }
+    if (piece.type === Piece.TYPE.BLACK && piece.position.y === Board.DIM - 1) {
+        piece.type = Piece.TYPE.BLACK_KING;
+    }
     
     if (Math.abs(move.to.x - move.from.x) >= 2) {
         this.removePiece(move.from.x + Math.sign(move.to.x - move.from.x), move.from.y + Math.sign(move.to.y - move.from.y));
+    }
+
+    if (piece.position.x === undefined) {
+        console.trace();
     }
 };
 

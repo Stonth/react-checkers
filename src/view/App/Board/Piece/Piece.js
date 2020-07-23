@@ -3,6 +3,8 @@ import React from 'react';
 import styles from './Piece.module.css';
 import pieceRed from '../../../../resources/images/checker-red.svg';
 import pieceBlack from '../../../../resources/images/checker-black.svg';
+import pieceRedKing from '../../../../resources/images/checker-red-king.svg';
+import pieceBlackKing from '../../../../resources/images/checker-black-king.svg';
 import ModelPiece from '../../../../model/piece';
 import ModelBoard from '../../../../model/board';
 
@@ -30,6 +32,10 @@ function getImageFromType(type) {
             return pieceRed;
         case ModelPiece.TYPE.BLACK:
             return pieceBlack;
+            case ModelPiece.TYPE.RED_KING:
+                return pieceRedKing;
+            case ModelPiece.TYPE.BLACK_KING:
+                return pieceBlackKing;
         default:
             return null;
     }
