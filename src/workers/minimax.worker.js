@@ -5,7 +5,7 @@ import Action from '../model/action';
 self.addEventListener("message", function (event) {
     const boardState = new BoardState(event.data.boardState.board, event.data.boardState.turn);
 
-    this.postMessage(minimax(boardState, 5));
+    this.postMessage(minimax(boardState, 5, event.data.difficulty));
 });
 
 function heuristic(boardState) {
@@ -33,40 +33,56 @@ function heuristic(boardState) {
     return x;
 }
 
-function minimax(boardState, depth) {
-    let children = boardState.getActions(boardState.turn);
-    let bestAction = null;
-    // TODO: Shuffle children
+function shuffle(array) {
+    const temp = [];
+    while (array.length > 0) {
+        temp.push(array.splice(Math.floor(Math.random() * array.length), 1)[0]);
+    }
+    array.push(...temp);
+}
+
+function minimax(boardState, depth, difficulty) {
+    const children = boardState.getActions(boardState.turn);
+    let actions = [];
+    shuffle(children);
     if (boardState.turn == BoardState.TURN.Red) {
         let value = -Infinity;
         for (const child of children) {
             const childValue = minimaxHelper(boardState.nextState(child), 0, depth, -Infinity, Infinity);
-            if (childValue > value || bestAction === null) {
-                value = childValue;
-                bestAction = child;
+            let ind = 0;
+            while (ind < actions.length && childValue > actions[ind].value) {
+                ind++;
             }
+            actions.splice(ind, 0, {
+                value: childValue,
+                action: child
+            });
         }
     } else {
         let value = Infinity;
         for (const child of children) {
-            const action = new Action(child);
             const childValue = minimaxHelper(boardState.nextState(child), 0, depth, -Infinity, Infinity);
-            if (childValue < value || bestAction === null) {
-                value = childValue;
-                bestAction = child;
+            let ind = 0;
+            while (ind < actions.length && childValue < actions[ind].value) {
+                ind++;
             }
+            actions.splice(ind, 0, {
+                value: childValue,
+                action: child
+            });
         }
     }
 
-    return bestAction;
+    const index = Math.min(Math.floor(actions.length * (1 - (Math.random() * (1 - difficulty)))), actions.length - 1);
+    return actions[index].action;
 }
 
 function minimaxHelper(boardState, depth, maxDepth, a, b) {
     if (depth == maxDepth || boardState.getWinner() !== null) {
         return heuristic(boardState);
     }
-    let children = boardState.getActions(boardState.turn);
-    // TODO: Shuffle children
+    const children = boardState.getActions(boardState.turn);
+    shuffle(children);
 
     let value;
     if (boardState.board.turn == BoardState.TURN.Red) {
@@ -77,7 +93,7 @@ function minimaxHelper(boardState, depth, maxDepth, a, b) {
             if (nextLevel > value) {
                 value = nextLevel;
             }
-            if (a < value) {
+            if (value > a) {
                 a = value;
             }
             if (a >= b) {
@@ -92,7 +108,7 @@ function minimaxHelper(boardState, depth, maxDepth, a, b) {
             if (nextLevel < value) {
                 value = nextLevel;
             }
-            if (b > value) {
+            if (value < beta) {
                 b = value;
             }
             if (a >= b) {

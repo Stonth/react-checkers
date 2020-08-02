@@ -8,7 +8,9 @@
     "@testing-library/user-event": "^7.2.1",
     "react": "^16.13.1",
     "react-app-rewired": "^2.1.6",
+    "react-div-100vh": "^0.3.8",
     "react-dom": "^16.13.1",
+    "react-native-listener": "^1.1.0",
     "react-scripts": "3.4.1",
     "worker-loader": "^2.0.0"
   },
